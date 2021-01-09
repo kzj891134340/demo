@@ -29,7 +29,7 @@ dependencies {
 
     implementation lib.spring_boot_web
     implementation lib.spring_boot_data_mongodb
-    implementation lib.spring_boot_data_redis
+//    implementation lib.spring_boot_data_redis
     implementation lib.spring_boot_undertow
     implementation lib.spring_boot_actuator
 
