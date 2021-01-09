@@ -6,10 +6,10 @@ plugins {
 group 'com.konzj.demo'
 version '1.0.0'
 
-apply from: 'https://github.com/kzj891134340/myproject/raw/main/libraries.gradle'
-apply from: 'https://github.com/kzj891134340/myproject/raw/main/java.gradle'
-apply from: 'https://github.com/kzj891134340/myproject/raw/main/idea.gradle'
-apply from: 'https://github.com/kzj891134340/myproject/raw/main/bundle-spring-boot-app.gradle'
+apply from: "libraries.gradle"
+apply from: "java.gradle"
+apply from: "idea.gradle"
+apply from: "bundle-spring-boot-app.gradle"
 
 repositories {
     maven { url "${project.'owner.repo'}" }
