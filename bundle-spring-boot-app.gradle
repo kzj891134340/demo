@@ -116,7 +116,8 @@ def createDockerfile() {
     def dockerfile = new File("$buildDir/Dockerfile")
     def out = dockerfile.newPrintWriter();
 
-    out.println("FROM aomitech/spring-boot-app:1.1.1")
+    out.println("FROM openjdk:\n" +
+            "      8-jdk-alpine")
     out.println("ENV APP_NAME=${project.name}")
     out.println("ADD bootScripts \$APP_HOME/bin")
     out.println("RUN mkdir \$APP_HOME/lib")
