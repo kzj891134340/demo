@@ -16,7 +16,8 @@ public class TestController {
     private TestService testService;
 
     @GetMapping
-    public void test1(){
+    public String test1(){
         testService.save();
+        return "SUCESS";
     }
 }
