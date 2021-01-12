@@ -1,83 +1,81 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 -->
-<configuration debug="false">
-    <!-- springboot读取application.yml配置文件中的配置 -->
-    <!--<springProperty scope="context" name="log_name" source="{spring.application.name}"/>-->
-    <property name="log_path" value="./logs"/>
-    <property name="log_name" value="demo"/>
-    <!--控制台输出-->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <!--格式化输出：%d表示日期，%trace_uuid表示流程跟踪唯一号，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{trace_uuid}] [%-5level] [%logger{50}] - %msg%n</pattern>
+<configuration>
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <property scope="context" name="logHome" value="${LOG_FOLDER}"/>
+    <property scope="context" name="logName" value="${APP_NAME}"/>
+    <!--获取配置中的参数信息-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                [%X{logId}] %clr(%d){cyan} %thread [%clr(%-5level){lightgreen}] [%logger{0}] - %msg%n
+            </pattern>
         </encoder>
     </appender>
-    <!-- 按照每天生成日志文件 -->
-<!--    <appender name="RocketmqClientAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-<!--        <File>${log_path}/rocketmq.log</File>-->
-<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
-<!--            &lt;!&ndash;日志文件输出的文件名&ndash;&gt;-->
-<!--            <FileNamePattern>${log_path}/rocketmq.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>-->
-<!--            &lt;!&ndash;日志文件保留天数&ndash;&gt;-->
-<!--            <MaxHistory>30</MaxHistory>-->
-<!--            &lt;!&ndash;给定日志文件大小，超过指定的大小就新建一个日志文件（注意，日志量大的话会一直增加，不会循环复用）&ndash;&gt;-->
-<!--            <maxFileSize>100MB</maxFileSize>-->
-<!--        </rollingPolicy>-->
-<!--        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
-<!--            &lt;!&ndash;格式化输出：%d表示日期，%trace_uuid表示流程跟踪唯一号，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符&ndash;&gt;-->
-<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{trace_uuid}] [%-5level] [%logger{50}] - %msg%n</pattern>-->
-<!--        </encoder>-->
-<!--    </appender>-->
-    <!-- 按照每天生成日志文件 -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${log_path}/${log_name}.log</File>
+    <appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则 如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天的日志改名为今天的日期。即，<File> 的日志都是当天的。 -->
+        <File>${logHome}/${logName}.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!--日志文件输出的文件名-->
-            <FileNamePattern>${log_path}/${log_name}.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
-            <!--日志文件保留天数-->
-            <MaxHistory>30</MaxHistory>
-            <!--给定日志文件大小，超过指定的大小就新建一个日志文件（注意，日志量大的话会一直增加，不会循环复用）-->
-            <maxFileSize>100MB</maxFileSize>
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <fileNamePattern>${logHome}/${logName}-%d{yyyy-MM-dd}-%i.gz</fileNamePattern>
+            <!--只保留最近30天的日志-->
+            <maxHistory>0</maxHistory>
+            <maxFileSize>1mb</maxFileSize>
         </rollingPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <!--格式化输出：%d表示日期，%trace_uuid表示流程跟踪唯一号，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{trace_uuid}] [%-5level] [%logger{50}] - %msg%n</pattern>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>[%X{logId}] %d [%-5level] [%logger{0}] - %msg%n</pattern>
         </encoder>
     </appender>
-    <!-- 按照每天error单独生成日志文件 -->
-    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${log_path}/${log_name}-error.log</File>
-        <!-- 过滤器，只记录ERROR级别的日志 -->
+
+    <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则 如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天的日志改名为今天的日期。即，<File> 的日志都是当天的。 -->
+        <File>${logHome}/${logName}-error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <fileNamePattern>${logHome}/${logName}-error-%d{yyyy-MM-dd}-%i.gz</fileNamePattern>
+            <!--只保留最近30天的日志-->
+            <maxHistory>0</maxHistory>
+            <maxFileSize>100mb</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>[%X{logId}] %d [%-5level] [%logger{0}] - %msg%n</pattern>
+        </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!--日志文件输出的文件名-->
-            <FileNamePattern>${log_path}/${log_name}-error.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
-            <!--日志文件保留天数-->
-            <MaxHistory>30</MaxHistory>
-            <!--给定日志文件大小，超过指定的大小就新建一个日志文件-->
-            <maxFileSize>100MB</maxFileSize>
-        </rollingPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <!--格式化输出：%d表示日期，%trace_uuid表示流程跟踪唯一号，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{trace_uuid}] [%-5level] [%logger{50}] - %msg%n</pattern>
-        </encoder>
     </appender>
-    <!-- 异步输出 -->
-    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+
+    <appender name="ASYNC_INFO" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、INFO、INFO级别的日志 -->
         <discardingThreshold>0</discardingThreshold>
-        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
-        <queueSize>512</queueSize>
-        <!-- 添加附加的appender,最多只能添加一个 -->
-        <appender-ref ref="FILE"/>
+        <queueSize>256</queueSize>
+        <appender-ref ref="FILE_INFO"/>
     </appender>
-    <!-- 日志输出级别 -->
-    <root level="DEBUG">
-                <appender-ref ref="STDOUT" />
-        <appender-ref ref="ASYNC"/>
+
+    <appender name="ASYNC_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、INFO、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>256</queueSize>
+        <appender-ref ref="FILE_ERROR"/>
+    </appender>
+    　　　　　　　　
+    <logger name="org.springframework" level="DEBUG" additivity="false">
+        <appender-ref ref="ASYNC_INFO"/>
+        <appender-ref ref="ASYNC_ERROR"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger name="com.onepayos" level="DEBUG" additivity="false">
+        <appender-ref ref="ASYNC_INFO"/>
+        <appender-ref ref="ASYNC_ERROR"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_INFO"/>
+        <appender-ref ref="ASYNC_ERROR"/>
     </root>
 </configuration>

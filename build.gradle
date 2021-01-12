@@ -22,29 +22,19 @@ configurations {
 }
 
 dependencies {
-//    implementation onepayos.entity
-//    implementation onepayos.persist
-//    implementation onepayos.channel_api
-//    implementation onepayos.common
+    implementation lib.retrofit
 
     implementation lib.spring_boot_web
     implementation lib.spring_boot_data_mongodb
-//    implementation lib.spring_boot_data_redis
     implementation lib.spring_boot_undertow
     implementation lib.spring_boot_actuator
+    implementation lib.spring_cloud_commons
 
     implementation lib.okhttp3
-    implementation lib.jsoup
 
     implementation lib.commons_lang3
     implementation lib.commons_codec
-//    implementation lib.sitb_common_entity
     implementation lib.spring_data_mongodb
-    implementation lib.groovy_all
 
-//    implementation lib.aomi_common_utils
-//    implementation lib.aomi_common_bs
-    implementation group: 'cn.hutool', name: 'hutool-all', version: '5.2.3'
-    implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
     testCompile lib._test
 }
